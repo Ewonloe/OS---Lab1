@@ -24,17 +24,56 @@ int validateCFlag(char* str)
 // Input: char* (string) str: argument of the -u flag.
 // Function: Validates the input and converts it to int.
 // Output: int: -1 if input is not valid, int converted str if valid.
-int validateUFlag(char* str)
+void readKernelFile(char* str, double kernel[3][3])
 {
-	if (isNumeric(str) == -1)
-		return -1;
 
-	int num = atoi(str);
+	FILE* file;
+	char c;
+	char element[8];
+	int strIndex = 0;
 
-	if ((num < 0) || (num > 255))
-		return -1;
+	file = fopen(str, "r");
+	if (file == NULL)
+	{
+		printf("File could not be opened.\n");
+		exit(1);
+	}
 
-	return num;
+	for(int j = 0; j < 3; j++)
+	{
+		int i = 0;
+
+		for(c = fgetc(file); (c != EOF); c = fgetc(file))
+		{
+
+			if (c == '\n')
+			{
+				element[strIndex] = '\0';
+				printf("xd = %s\n", element);
+				kernel[j][i] = atof(element);
+				strIndex = 0;
+				break;
+			}
+
+			else if (c == ' ')
+			{
+				element[strIndex] = '\0';
+				kernel[j][i] = atof(element);
+				strIndex = 0;
+				i++;
+			}
+
+			else
+			{	
+				element[strIndex] = c;
+				strIndex++;
+			}
+		}
+	}
+
+	kernel[2][2] = atof(element);
+
+	fclose(file);
 }
 
 // Input: char* (string) str: argument of the -u flag.

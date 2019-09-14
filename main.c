@@ -11,11 +11,11 @@ int main(int argc, char *argv[])
 	int flags = 0;
 
 	int imgNumber;        // Number of images received.
-	int binaryThreshold;  // Binarization threshold.
+	double kernel[3][3];
 	int clssThreshold;    // Classification threshold.
 	int skipAnalysis = 0;    // Boolean. 1 for showing 'nearly black' analysis, 0 for skipping it.
 
-	while ((opt = getopt(argc, argv, ":c:u:n:b")) != -1)
+	while ((opt = getopt(argc, argv, ":c:m:n:b")) != -1)
 	{
 		switch(opt)
 		{
@@ -30,13 +30,10 @@ int main(int argc, char *argv[])
 				flags++;
 				break;
 
-			// Binarization threshold flag.
-			case 'u':
-				if ((binaryThreshold = validateUFlag(optarg)) == -1)
-				{
-					printf("Invalid input in: Binarization threshold (-u)\n");
-					exit(1);
-				}
+			// Kernel.
+			case 'm':
+				
+				readKernelFile(optarg, kernel);
 
 				flags++;
 				break;
@@ -74,6 +71,8 @@ int main(int argc, char *argv[])
 		printf("Incorrect number of arguments. Terminating...\n");
 		exit(1);
 	}
+
+	printf("%f\n", kernel[2][2]);
 
 	printf("Success\n");
 }
