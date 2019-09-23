@@ -49,7 +49,6 @@ void readKernelFile(char* str, double kernel[3][3])
 			if (c == '\n')
 			{
 				element[strIndex] = '\0';
-				printf("xd = %s\n", element);
 				kernel[j][i] = atof(element);
 				strIndex = 0;
 				break;

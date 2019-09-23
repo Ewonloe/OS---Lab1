@@ -2,13 +2,19 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 #include "utils.h"
+
+#define READ 0
+#define WRITE 1
 
 int main(int argc, char *argv[])
 {
-
 	int opt;
 	int flags = 0;
+
+	int piped[2];
+	pid_t pid;
 
 	int imgNumber;        // Number of images received.
 	double kernel[3][3];
@@ -72,7 +78,25 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-	printf("%f\n", kernel[2][2]);
 
-	printf("Success\n");
+	pipe(piped);
+	pid = fork();
+
+	// Child section
+	if(pid == 0)
+	{
+		close(piped[WRITE]);
+		char *args[] = {(char *) "imageReading", NULL};
+		execvp("imageReading", args);
+		perror("exec failed");
+		return 1;
+	}
+
+	else
+	{
+		close(piped[READ]);
+		write(piped[WRITE], "Test string", 128);
+	}
+
+	return 0;
 }
