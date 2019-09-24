@@ -21,6 +21,8 @@ int main(int argc, char *argv[])
 	int clssThreshold;    // Classification threshold.
 	int skipAnalysis = 0;    // Boolean. 1 for showing 'nearly black' analysis, 0 for skipping it.
 
+	char str[128];
+
 	while ((opt = getopt(argc, argv, ":c:m:n:b")) != -1)
 	{
 		switch(opt)
@@ -86,8 +88,10 @@ int main(int argc, char *argv[])
 	if(pid == 0)
 	{
 		close(piped[WRITE]);
+		dup2(piped[READ], STDIN_FILENO);
+
 		char *args[] = {(char *) "imageReading", NULL};
-		execvp("imageReading", args);
+		execvp("./imageReading", args);
 		perror("exec failed");
 		return 1;
 	}
@@ -95,7 +99,14 @@ int main(int argc, char *argv[])
 	else
 	{
 		close(piped[READ]);
-		write(piped[WRITE], "Test string", 128);
+
+		sprintf(str, "%d %d %d", imgNumber, clssThreshold, skipAnalysis);
+		write(piped[WRITE], str, 128);
+
+		sprintf(str, "%f %f %f %f %f %f %f %f %f", kernel[0][0], kernel[0][1], kernel[0][2],
+													kernel[1][0], kernel[1][1], kernel[1][2]
+													,kernel[2][0] ,kernel[2][1] ,kernel[2][2]);
+		write(piped[WRITE], str, 128);
 	}
 
 	return 0;
