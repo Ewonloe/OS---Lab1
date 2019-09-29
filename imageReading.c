@@ -4,7 +4,9 @@
 #include <fcntl.h>
 #include <png.h>
 #include <sys/types.h> //  Both of these are potentially useless
-#include <sys/stat.h>  //  
+#include <sys/stat.h>  //
+#include "structs.h"
+#include "img.h"
 
 #define READ 0
 #define WRITE 1
@@ -15,8 +17,6 @@ int main(int argc, char *argv[])
 	ssize_t pngFile;
 	char str[128], fileName[255], data[4097];
 	int imgNumber, threshold, skipAnalysis;
-	//PNG files structures
-	png_image image;
 
 	read(READ, str, 128);
 
@@ -32,21 +32,8 @@ int main(int argc, char *argv[])
 	}
 	else
 	{
-		printf("File found!\n");
-		printf("This image reads: %d in decimal\n", fileDescr);
-		while(dataStream = read(fileDescr, data, 4096) > 0)
-		{
-			for(j; j != dataStream; j++)
-			{
-				printf("%8x ", data[j]);
-				if(i % 16 == 0)
-				{
-					printf("\n");
-				}
-				i++;
-			}
-		}
-	printf("\n");
+		startLecture(fileName);
+		printf("\n");
 	}
 
 	read(READ, str, 128);

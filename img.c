@@ -8,10 +8,11 @@
 #include <zlib.h>
 #include <stdlib.h>
 #include <string.h>
+#include "structs.h"
 
-#define BYTES 8
-#define L2 100
+void stringToHex(unsigned char* str, unsigned int realSize);
 
+//Function
 int powOf(int a, int b)
 {
     int i, result = 1;
@@ -37,14 +38,17 @@ int powOf(int a, int b)
     return result;
 }
 
-int hexToDec(char hex[], int length)
+unsigned int hexToDec(unsigned char hex[], int length)
 {
-    int  i, result = 0, exp = 0, tempHex;
-    for(i = length - 1; i >= 0 && hex[i] != '\0'; i--)
+    int  i, result = 0, exp = 0;
+    unsigned int tempHex;
+    result = 0;
+    exp = length - 1;
+    for(i = 0; i < length; i++)
     {
         tempHex = (int)hex[i];
         result += tempHex * powOf(256, exp);
-        exp++;
+        exp -= 1;
     }
     return result;
 }
@@ -52,7 +56,6 @@ int hexToDec(char hex[], int length)
 void stringToHex(unsigned char* str, unsigned int realSize)
 {
     int i;
-    printf("The real size is %x\n", realSize);
     printf("| ");
     for(i = 0; i < realSize; i++)
     {        
@@ -62,140 +65,113 @@ void stringToHex(unsigned char* str, unsigned int realSize)
     printf("|\n");
 }
 
-char* readChunk(int fd)
+void getDimensions(char *buffer, Img *imgFile)
+{
+    unsigned char strWidth[4], strHeight[4], bitDepth[1];
+    int i;
+    for(i = 0; i < 4; i++)
+    {
+        strWidth[i] = buffer[i];
+        strHeight[i] = buffer[i + 4];           
+    }
+    bitDepth[0] = buffer[8];
+    imgFile->width = hexToDec(strWidth, 4);
+    imgFile->height = hexToDec(strHeight, 4);
+    imgFile->bitDepth = hexToDec(bitDepth, 1);
+}
+
+void getData(unsigned char* buffer, Img *imgFile, int lenght)
+{
+    int i;
+    imgFile->data = (char*) malloc(sizeof(char) * lenght);
+    for(i = 0; i < lenght; i++)
+    {
+        imgFile->data[i] = buffer[i];
+    }
+    //stringToHex(buffer, lenght);
+    //stringToHex(imgFile->data, lenght);
+}
+
+char* readChunk(int fd, Img *imgFile)
 {
     int size, lenght;
-    char lenStr[4], *chunkName, *buffer,  crc[4];
+    unsigned char lenStr[10], *chunkName, *buffer,  crc[4];
+
     chunkName = (char*) malloc(sizeof(char) * 4);
     size = read(fd, lenStr, 4);//First, get the chunk data's lenght
     lenght = hexToDec(lenStr, 4);
-    //printf("\nlenStr = %d\n", size);
+    
+    if((unsigned int)lenStr[0] == 0 && (unsigned int)lenStr[1] == 0 && (unsigned int)lenStr[2] == 0 && (unsigned int)lenStr[3] == 0)
+    {
+        strcpy(chunkName, "IEND");
+        return chunkName;
+    }
 
     size = read(fd, chunkName, 4);//Get the chunk name
 
-    buffer = (char*) malloc(sizeof(char) * (lenght));
-    size = read(fd, buffer, lenght);//Store chunk data
-    //if(strcmp(chunkName, "tEXt") == 0) printf("|Size of tEXt data is %d\n|And data is %s\n", size, buffer);
-
-    size = read(fd, crc, 4);//Get crc
-    
-    printf("|Lenght = %d\n|Chunk = %s\n|crc = %s\n+-------------\n", lenght, chunkName, crc);
-    
-    printf("DATA\n");
-    stringToHex(buffer, lenght);
-    printf("\n");
-    /*
-    if(strcmp(chunkName, "IDAT") == 0)
+    if(lenght > 0)
     {
-        printf("HERE COMES IDAAAAAT\nlenght = %d", lenght);
-        stringToHex(buffer, lenght);
+        buffer = (char*) malloc(sizeof(char) * (lenght));
+        size = read(fd, buffer, lenght);//Store chunk data
+
+        size = read(fd, crc, 4);//Get crc
+        printf("\n");
+        if(strcmp(chunkName, "IHDR") == 0)
+        {
+            getDimensions(buffer, imgFile);
+        }
+        if(strcmp(chunkName, "IDAT") == 0)
+        {
+            getData(buffer, imgFile, lenght);
+        }
+        free(buffer);
     }
-    */
-    free(buffer);
+    
     return chunkName;
 }
 
 void readPNG(int fd)
 {
     unsigned char *chunkName = (unsigned char*) malloc(sizeof(char) * 4);
+    unsigned int width, height;
+    Img imgFile;
     
-    while(strcmp(chunkName, "IDAT") != 0)
+    imgFile.dataSize = 0;
+    
+    while(strcmp(chunkName, "IEND") != 0)
     {
-        printf("+-------------\n");
-        chunkName = readChunk(fd);
+        chunkName = readChunk(fd, &imgFile);
+        if(strcmp(chunkName, "IEND") == 0)
+        {
+            break;
+        }
     }
-    printf("IDAT!\n");
     free(chunkName);
 }
 
-int main(int argc, char* argv[])
+int startLecture(char *filename)
 {
     int fd, i = 0;
     char buffer[256], buff2[256];
     int size;
+    Img dryBaby;
 
-    fd = open("imagen_1.png", O_RDONLY);
-    if(fd == -1)
+    fd = open(filename, O_RDONLY);
+
+    //First 8 bytes of header
+    for(i; i < 8; i++)
     {
-        printf("File not found!\n");
-        exit(0);
-    }
-    
-    printf("File found, now it can be read\n");
-
-    size = read(fd, buffer, 8); //4 Extracts 'PNG' as a string
-
-    //printf("Size is %d bytes\nFormat is: %s\n", size, buffer);
-    close(fd);
-
-    fd = open("imagen_1.png", O_RDONLY);
-    for(i; i < BYTES; i++)
-    {
-        size = read(fd, buff2, 1);
-        //printf("Byte #%d is: %s\n", i + 1, buff2);
-        buff2[0] = 0;
+        size = read(fd, buffer, 1);
+        buffer[0] = 0;
     }
 
     readPNG(fd);
-
-    /*
-    readChunk(fd);
-    readChunk(fd);
-    readChunk(fd);
-    readChunk(fd);
-    readChunk(fd);
-    readChunk(fd);
-    */
-
-    /*
-
-    //Extract width and height of the png file
-    char width[4], length[4], nothing[4], buff3[256], dummy[33];
-    int realWidth, realHeight, dumby;
-    size = read(fd, nothing, 4);//Size of IHDR chunk
-    printf("Size of IHDR data: %d\n", hexToDec(nothing, 4));
-    size = read(fd, width, 4);//IHDR
-    size = read(fd, length, 4);//Actual width
-    int j = 0;
-    printf("PNG file actual chunk is %s\n", width);
-    //printf("Supposedly, width and height are %s and %s\n", width, length);
-    //printf("It's numbers are %d %d %d %d\n", (int)width[0], (int)width[1], (int)width[2], (int)width[3]);//Decimal
-    //printf("It's numbers are %x %x %x %x\n", (int)width[0], (int)width[1], (int)width[2], (int)width[3]);//Hex
-    //printf("It's numbers are %x %x %x %x\n", (int)length[0], (int)length[1], (int)length[2], (int)length[3]);//Hex
-    //printf("It's numbers are %d %d %d %d\n", (int)length[0], (int)length[1], (int)length[2], (int)length[3]);//Decimal
-    printf("Width %d\n", hexToDec(length, 4));
-    size = read(fd, buff3, 4);//Actual height
-    printf("Height %d\n", hexToDec(buff3, 4));
-    buff3[0] = 0;
-    size = read(fd, buff3, 1);//Bit depth?
-    printf("Bit depth = %d\n", hexToDec(buff3, 1));
-    buff3[0] = 0;
-    size = read(fd, buff3, 1);//Bit depth
-    printf("Color type = %d\n", hexToDec(buff3, 1));//Debe ser 6 para tener Alpha, Red, Green, Blue
-    buff3[0] = 0;
-    size = read(fd, buff3, 1);//Bit depth
-    printf("Compress method = %d\n", hexToDec(buff3, 1));//Debe ser 6 para tener Alpha, Red, Green, Blue
-
-    
-    /*
-    for(i = 0; i < 2; i++)
-    {
-        size = read(fd, buff3, 4);
-        printf("Chunk #%d: Next 4 byte chunk: %s\n", i + 1, buff3);
-
-        buff3[0] = 0;
-    }
-    printf("\n");
-    for(i = 0; i < L2; i++)
-    {
-        size = read(fd, buff3, 4);
-        printf("Chunk #%d: Next 4 byte chunk: %s\n", i + 1, buff3);
-
-        buff3[0] = 0;
-    }
-    */
-   
     close(fd);
     
     return 0;
+}
+
+int main()
+{
+    startLecture("imagen_1.png");
 }
