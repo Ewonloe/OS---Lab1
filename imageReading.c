@@ -17,6 +17,7 @@ int main(int argc, char *argv[])
 	ssize_t pngFile;
 	char str[128], fileName[255], data[4097];
 	int imgNumber, threshold, skipAnalysis;
+	Img imageFile;
 
 	read(READ, str, 128);
 
@@ -32,7 +33,7 @@ int main(int argc, char *argv[])
 	}
 	else
 	{
-		startLecture(fileName);
+		imageFile = startLecture(fileName);
 		printf("\n");
 	}
 

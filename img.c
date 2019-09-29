@@ -130,7 +130,7 @@ char* readChunk(int fd, Img *imgFile)
     return chunkName;
 }
 
-void readPNG(int fd)
+Img readPNG(int fd)
 {
     unsigned char *chunkName = (unsigned char*) malloc(sizeof(char) * 4);
     unsigned int width, height;
@@ -147,14 +147,15 @@ void readPNG(int fd)
         }
     }
     free(chunkName);
+    return imgFile;
 }
 
-int startLecture(char *filename)
+Img startLecture(char *filename)
 {
     int fd, i = 0;
-    char buffer[256], buff2[256];
+    char buffer[256];
     int size;
-    Img dryBaby;
+    Img imageFile;
 
     fd = open(filename, O_RDONLY);
 
@@ -165,13 +166,9 @@ int startLecture(char *filename)
         buffer[0] = 0;
     }
 
-    readPNG(fd);
+    imageFile = readPNG(fd);
     close(fd);
     
-    return 0;
+    return imageFile;
 }
 
-int main()
-{
-    startLecture("imagen_1.png");
-}

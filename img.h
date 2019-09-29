@@ -15,6 +15,6 @@ char* readChunk(int fd, Img *imgFile);
 
 void readPNG(int fd);
 
-int startLecture(char* fileName);
+Img startLecture(char* fileName);
 
 #endif
