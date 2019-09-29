@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <png.h>
 #include <sys/types.h> //  Both of these are potentially useless
 #include <sys/stat.h>  //
 #include "structs.h"
