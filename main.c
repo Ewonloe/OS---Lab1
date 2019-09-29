@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
 		sprintf(str, "%d %d %d", imgNumber, clssThreshold, skipAnalysis);
 		write(piped[WRITE], str, 128);
 
-		sprintf(str, "%f %f %f %f %f %f %f %f %f", kernel[0][0], kernel[0][1], kernel[0][2],
+		sprintf(str, "%lf %lf %lf %lf %lf %lf %lf %lf %lf", kernel[0][0], kernel[0][1], kernel[0][2],
 												   kernel[1][0], kernel[1][1], kernel[1][2],
 												   kernel[2][0], kernel[2][1], kernel[2][2]);
 		write(piped[WRITE], str, 128);
