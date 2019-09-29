@@ -27,7 +27,6 @@ int main(int argc, char *argv[])
 
 	// Read args
 	read(READ, str, 128);
-	printf("Input: %s\n", str);
 	sscanf(str, "%d %d %d", &imgNumber, &threshold, &skipAnalysis);
 
 	// Read kernel
@@ -93,9 +92,7 @@ int main(int argc, char *argv[])
 	}
 	
 	printf("Image 'imagen_%d' reading process ended successfully\n", imgNumber);
-
-
-	
+		
 
 
 	return 0;
