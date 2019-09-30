@@ -47,7 +47,10 @@ int main(int argc, char *argv[])
 				read(READ, str, 128);
 				sscanf(str, "%f", &imageFile.image2[i][j]);
 			}
+
+			free(imageFile.image2[i]);
 		}
+		free(imageFile.image2);
 
 		tempN++;
 	}
