@@ -21,8 +21,12 @@ void convolution(float **imgMatrix, float **imgMatrix2, double kernel[3][3], Img
 
 void setImage(float **imgMatrix, Img *imgFile);
 
+void setImgMatrix(float **imgMatrix, Img *imgFile);
+
 void printMat(float** imgMatr, Img *imgFile);
 
 void rectification(float **imgMatrix, Img *imgFile);
+
+int nearlyBlack(float** imgMatrix, Img *imgFile, float percentage);
 
 #endif

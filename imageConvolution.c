@@ -31,12 +31,12 @@ int main(int argc, char *argv[])
 	// Read global args.
 	read(READ, str, 128);
 	sscanf(str, "%d %d %d", &imgNumber, &threshold, &skipAnalysis);
-	printf("%d %d %d\n", imgNumber, threshold, skipAnalysis);
+	//printf("%d %d %d\n", imgNumber, threshold, skipAnalysis);
 
 	// Read image params.
 	read(READ, str, 128);
 	sscanf(str, "%u %u %u %u", &imageFile.width, &imageFile.height, &imageFile.dataSize, &imageFile.bitDepth);
-	printf("%d %d %d %d\n", imageFile.width, imageFile.height, imageFile.dataSize, imageFile.bitDepth);
+	//printf("%d %d %d %d\n", imageFile.width, imageFile.height, imageFile.dataSize, imageFile.bitDepth);
 
 
 	// Transmission start.
@@ -80,12 +80,8 @@ int main(int argc, char *argv[])
 		{
 			imgMatrix[i] = (float*) malloc(sizeof(float) * imageFile.width);
 		}
-		printf("%d %d", imageFile.height, imageFile.width);
 		setImage(imgMatrix, &imageFile);
-		//printMat(imgMatrix, &imageFile);
-		printf("\n");
 
-		//THIS ONE VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
 		float **imgMatrix2 = (float**) malloc(sizeof(float*) * imageFile.height);
 		for(i = 0; i < imageFile.height; i++)
 		{
@@ -99,7 +95,6 @@ int main(int argc, char *argv[])
 			i = i + 1;
 		}
 		convolution(imgMatrix, imgMatrix2, kernel, &imageFile);
-		//printMat(imgMatrix2, &imageFile);
 		tempN++;
 
 

@@ -9,9 +9,9 @@
 #include "structs.h"
 #include "img.h"
 
-void stringToHex(unsigned char* str, unsigned int realSize);
-
-//Function
+//Input: ints a and b
+//Function: a ^ b
+//Returns: int a ^ b
 int powOf(int a, int b)
 {
     int i, result = 1;
@@ -37,6 +37,9 @@ int powOf(int a, int b)
     return result;
 }
 
+//Input: Hex number (without 0x) and the lenght of the string
+//Function: Calculates the value of the number in it's decimal equivalent
+//Output: Unsigned int with the decimal value
 unsigned int hexToDec(unsigned char hex[], int length)
 {
     int  i, result = 0, exp = 0;
@@ -52,6 +55,9 @@ unsigned int hexToDec(unsigned char hex[], int length)
     return result;
 }
 
+//Input: Bidimensional array for image (pointer) and Img pointer to extract the image data
+//Function: Sets an array with the pixel values of the image
+//Output: None (void)
 void setImage(float **imgMatrix, Img *imgFile)
 {
     int i, j, pos = 0;
@@ -69,6 +75,25 @@ void setImage(float **imgMatrix, Img *imgFile)
     }
 }
 
+//Input: Bidimensional array for image (pointer) and Img pointer to extract the image data
+//Function: Sets an array with the data from the Img struct
+//Output: None (void)
+void setImgMatrix(float **imgMatrix, Img *imgFile)
+{
+    int i, j;
+    for(i = 0; i < imgFile->height; i++)
+    {
+        for(j = 0; j < imgFile->width; j++)
+        {
+            //imgMatrix[i][j] = (float) hexToDec(pixel, 3);
+            //imgMatrix[i][j] = 
+        }
+    }
+}
+
+//Input: The bidimensional array as float array, a double array for the final convolution, kernel mask and Img pointer
+//Function: Perfoms the convolution according to the first image matrix and kernel and stores it in the second image matrix
+//Output: Void (none)
 void convolution(float **imgMatrix, float **imgMatrix2, double kernel[3][3], Img *imgFile)
 {
     int i, j;    
@@ -91,12 +116,15 @@ void convolution(float **imgMatrix, float **imgMatrix2, double kernel[3][3], Img
     }
 }
 
+//Input: The bidimensional array for the image, Img struct pointer
+//Function: Verifies if all pixel values are non negative, if they are, changes them to 0
+//Output: Rectified image
 void rectification(float **imgMatrix, Img *imgFile)
 {
     int i,j;
-    for(i = 0, i < imgFile->height; i++)
+    for(i = 0; i < imgFile->height; i++)
     {
-        for(j = 0, j < imgFile->width; j++)
+        for(j = 0; j < imgFile->width; j++)
         {
             if(imgMatrix[i][j] < 0)
             {
@@ -106,8 +134,49 @@ void rectification(float **imgMatrix, Img *imgFile)
     }
 }
 
-void pooling(float **imgMatrix);
+void pooling(float **imgMatrix, Img *imgFile)
+{
+    int i, j, width = imgFile->width, height = imgFile->height, fWidth = 2, fHeight = 2;
+    //int 
+    float maxTemp;
+    for(i = 0; i < height; i += fHeight)
+    {
+        for(i = 0; i < width; i += fWidth)
+        {
 
+        }
+    }
+
+}
+
+//Input: matrix with pixel values, Img struct pointer and treshold percentage
+//Function: Checks each pixel value and counts how many of them are black
+//Output: 1 if it's classified as nearly black, 0 in the opposite case
+int nearlyBlack(float** imgMatrix, Img *imgFile, float percentage)
+{
+    int i, j;
+    float max = (float)imgFile->width * (float)imgFile->height, blackP = 0.0, finalP;
+    for(i = 0; i < imgFile->height; i++)
+    {
+        for(j = 0; j < imgFile->width; j++)
+        {
+            if(imgMatrix[i][j] == 0.0)
+            {
+                blackP += 1;
+            }
+        }
+    }
+    finalP = (blackP * 100) / max;
+    if(finalP > percentage)
+    {
+        return 1; //Nearly black
+    }
+    return 0; //Opposite case
+}
+
+//Input:Bidimensional array for the image, Img pointer
+//Function: Prints the matrix
+//Output: None (Void)
 void printMat(float** imgMatr, Img *imgFile)
 {
     int i,j;
@@ -121,6 +190,9 @@ void printMat(float** imgMatr, Img *imgFile)
     }
 }
 
+//Input: String with binary/Hex data, array size
+//Function: Prints the data in hex
+//Output: None (Void)
 void stringToHex(unsigned char* str, unsigned int realSize)
 {
     int i;
@@ -133,6 +205,9 @@ void stringToHex(unsigned char* str, unsigned int realSize)
     printf("|\n");
 }
 
+//Input: Data from IHDR chunk, Img struct pointer
+//Function: Stores all important data in a Img struct
+//Output: None (Void)
 void getDimensions(char *buffer, Img *imgFile)
 {
     unsigned char strWidth[4], strHeight[4], bitDepth[1], cType[1], cMethod[1];
@@ -152,19 +227,30 @@ void getDimensions(char *buffer, Img *imgFile)
     imgFile->cMethod = hexToDec(cMethod, 1);
 }
 
+//Input: Data from IDAT chunk, Img struct pointer, lenght of the data
+//Function: Stores the IDAT data to the struct, appends data from IDAT chunk if one or more have already been stored
+//Output: None (Void)
 void getData(unsigned char* buffer, Img *imgFile, int lenght)
 {
     int i;
-    imgFile->data = (char*) malloc(sizeof(char) * lenght);
-    for(i = 0; i < lenght; i++)
+    if(imgFile->idatChunks == 0)
     {
-        imgFile->data[i] = buffer[i];
+        imgFile->data = (char*) malloc(sizeof(char) * lenght);
+        for(i = 0; i < lenght; i++)
+        {
+            imgFile->data[i] = buffer[i];
+        }
     }
-    imgFile->dataSize = lenght;
-    //stringToHex(buffer, lenght);
-    //stringToHex(imgFile->data, lenght);
+    else
+    {
+        strcat(imgFile, buffer);
+    }    
+    imgFile->dataSize += lenght;
 }
 
+//Input: File descriptor to read binary file from and Img pointer
+//Function: Reads chunks and stores information as it goes into the struct
+//Output: None (Void)
 char* readChunk(int fd, Img *imgFile)
 {
     int size, lenght;
@@ -182,7 +268,7 @@ char* readChunk(int fd, Img *imgFile)
 
     size = read(fd, chunkName, 4);//Get the chunk name
 
-    if(lenght > 0)
+    if(lenght > 0)//IEND has data lenght 0
     {
         buffer = (char*) malloc(sizeof(char) * (lenght));
         size = read(fd, buffer, lenght);//Store chunk data
@@ -203,6 +289,9 @@ char* readChunk(int fd, Img *imgFile)
     return chunkName;
 }
 
+//Input: File descriptor to read from
+//Function: Start reading PNG data and stops at the last chunk (IEND)
+//Output: Img structre with info stored
 Img readPNG(int fd)
 {
     unsigned char *chunkName = (unsigned char*) malloc(sizeof(char) * 4);
@@ -210,6 +299,7 @@ Img readPNG(int fd)
     Img imgFile;
     
     imgFile.dataSize = 0;
+    imgFile.idatChunks = 0;
     
     while(strcmp(chunkName, "IEND") != 0)
     {
@@ -223,6 +313,9 @@ Img readPNG(int fd)
     return imgFile;
 }
 
+//Input: Name of the image file to read
+//Function: Starts reading the png file information
+//Output: Img struct with all data stored
 Img startLecture(char *filename)
 {
     int fd, i = 0;

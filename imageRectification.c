@@ -18,6 +18,16 @@ int main(int argc, char *argv[])
 	char str[128];
 	int imgNumber, threshold, skipAnalysis;
 	Img imageFile;
+	float **imgMatrix = (float**) malloc(sizeof(float*) * imageFile.height);
+	for(i = 0; i < imageFile.width; i++)
+	{
+		imgMatrix[i] = (float*) malloc(sizeof(float) * imageFile.width);
+	}
+	imageFile.image2 = (float**)malloc(sizeof(float*) * imageFile.height);
+	for(i = 0; i < imageFile.width; i++)
+	{
+		imageFile.image2[i] = (float*) malloc(sizeof(float) * imageFile.width);
+	}
 
 
 	// Read global args.
