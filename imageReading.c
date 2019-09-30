@@ -100,6 +100,5 @@ int main(int argc, char *argv[])
 		tempN++;
 	}
 
-
 	return 0;
 }

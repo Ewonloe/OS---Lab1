@@ -7,8 +7,11 @@ imageReading: imageReading.c img.o imageConvolution
 imageConvolution: imageConvolution.c img.o imageRectification
 	gcc -o imageConvolution imageConvolution.c img.o
 
-imageRectification: imageRectification.c img.o
+imageRectification: imageRectification.c img.o imagePooling
 	gcc -o imageRectification imageRectification.c img.o
+
+imagePooling: imagePooling.c img.o
+	gcc -o imagePooling imagePooling.c img.o
 
 utils.o: utils.c utils.h
 	gcc -c utils.c

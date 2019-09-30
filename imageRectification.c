@@ -17,52 +17,90 @@ int main(int argc, char *argv[])
 	int i, j;
 	char str[128];
 	int imgNumber, threshold, skipAnalysis;
+	int tempN = 0;
 	Img imageFile;
-	
-	float **imgMatrix;
-	imgMatrix = (float**) malloc(sizeof(float*) * imageFile.height);
-	for(i = 0; i < imageFile.height; i++)
-	{
-		imgMatrix[i] = (float*) malloc(sizeof(float) * imageFile.width);
-	}
-	imageFile.image2 = (float**)malloc(sizeof(float*) * imageFile.height);
-	for(i = 0; i < imageFile.height; i++)
-	{
-		imageFile.image2[i] = (float*) malloc(sizeof(float) * imageFile.width);
-	}
 
 	// Read global args.
 	read(READ, str, 128);
 	sscanf(str, "%d %d %d", &imgNumber, &threshold, &skipAnalysis);
 
-	// Read image params.
-	read(READ, str, 128);
-	sscanf(str, "%u %u %u", &imageFile.width, &imageFile.height, &imageFile.dataSize);
-
 	imageFile.data = (char*) malloc(sizeof(char) * imageFile.dataSize);
 
-	i = 0;
+	// Transmission start.
+	pipe(piped);
+	pid = fork();
 
-	/*
-	while (i < (imageFile.dataSize))
-	{	
-		read(READ, str, 128);
-		sscanf(str,"%c", &imageFile.data[i]);
-		i = i + 1;
-	}
-	*/
-	for(i = 0; i < imageFile.height; i++)
+	// Child section
+	if (pid == 0)
 	{
-		for(j = 0; j < imageFile.width; j++)
-		{
-			read(READ, str, 128);
-			printf("%s\n", str);
-			sscanf(str, "%f", &imageFile.image2[i][j]);
-		}
-	}
-	rectification(&imageFile);
+		close(piped[WRITE]);
+		dup2(piped[READ], STDIN_FILENO);
 
-	printf("Data = %d\n", imageFile.height);
+		char *args[] = {(char *)"imagePooling", NULL};
+		execvp("./imagePooling", args);
+		perror("exec failed");
+		return 1;
+	}
+
+	else
+	{
+		close(piped[READ]);
+
+		// Send global args.
+		sprintf(str, "%d %d %d", imgNumber, threshold, skipAnalysis);
+		write(piped[WRITE], str, 128);
+	}
+
+	while(tempN < imgNumber)
+	{
+
+		// Read image params.
+		read(READ, str, 128);
+		sscanf(str, "%u %u %u", &imageFile.width, &imageFile.height, &imageFile.dataSize);
+		//printf("%u %u %u\n", imageFile.width, imageFile.height, imageFile.dataSize);
+
+
+		imageFile.image2 = (float**)malloc(sizeof(float*) * imageFile.height);
+		for(i = 0; i < imageFile.height; i++)
+		{
+			imageFile.image2[i] = (float*) malloc(sizeof(float) * imageFile.width);
+		}
+
+
+		for(i = 0; i < imageFile.height; i++)
+		{
+			for(j = 0; j < imageFile.width; j++)
+			{
+				read(READ, str, 128);
+				sscanf(str, "%f", &imageFile.image2[i][j]);
+			}
+		}
+
+		rectification(&imageFile);
+
+		// Send image data.
+
+		// Send image params.
+		sprintf(str, "%u %u %u", imageFile.width, imageFile.height, imageFile.dataSize);
+		write(piped[WRITE], str, 128);
+
+		for(i = 0; i < imageFile.height; i++)
+		{
+			for(j = 0; j < imageFile.width; j++)
+			{
+				sprintf(str, "%f", imageFile.image2[i][j]);
+				write(piped[WRITE], str, 128);
+			}
+
+			free(imageFile.image2[i]);
+		}
+		free(imageFile.image2);
+		tempN++;
+	}
+
+	printf("Rectification Finished\n");
+
+
 
 	return 0;
 }

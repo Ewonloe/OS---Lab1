@@ -27,17 +27,12 @@ int main(int argc, char *argv[])
 												&kernel[1][0], &kernel[1][1], &kernel[1][2],
 												&kernel[2][0], &kernel[2][1], &kernel[2][2]);
 
-
 	// Read global args.
 	read(READ, str, 128);
 	sscanf(str, "%d %d %d", &imgNumber, &threshold, &skipAnalysis);
 	//printf("%d %d %d\n", imgNumber, threshold, skipAnalysis);
 
-	// Read image params.
-	read(READ, str, 128);
-	sscanf(str, "%u %u %u %u", &imageFile.width, &imageFile.height, &imageFile.dataSize, &imageFile.bitDepth);
 	//printf("%d %d %d %d\n", imageFile.width, imageFile.height, imageFile.dataSize, imageFile.bitDepth);
-
 
 	// Transmission start.
 	pipe(piped);
@@ -62,10 +57,6 @@ int main(int argc, char *argv[])
 		// Send global args.
 		sprintf(str, "%d %d %d", imgNumber, threshold, skipAnalysis);
 		write(piped[WRITE], str, 128);
-
-		// Send image params.
-		sprintf(str, "%u %u %u", imageFile.width, imageFile.height, imageFile.dataSize);
-		write(piped[WRITE], str, 128);
 	
 	}
 
@@ -75,6 +66,11 @@ int main(int argc, char *argv[])
 
 	while(tempN < imgNumber)
 	{
+
+		// Read image params.
+		read(READ, str, 128);
+		sscanf(str, "%u %u %u %u", &imageFile.width, &imageFile.height, &imageFile.dataSize, &imageFile.bitDepth);
+
 		i = 0;
 		while (i < (imageFile.dataSize))
 		{	
@@ -100,24 +96,30 @@ int main(int argc, char *argv[])
 
 		tempN++;
 
+		// Send image params.
+		sprintf(str, "%u %u %u", imageFile.width, imageFile.height, imageFile.dataSize);
+		write(piped[WRITE], str, 128);
+
 		for(i = 0; i < imageFile.height; i++)
 		{
 
 			for(j = 0; j < imageFile.width; j++)
 			{
-
 				sprintf(str,"%f", imgMatrix2[i][j]);
 				write(piped[WRITE], str, 128);
 			}
 			
 			free(imgMatrix[i]);
 			free(imgMatrix2[i]);
+			
 		}
 
 		free(imgMatrix);
 		free(imgMatrix2);
 	}
 
+
+	printf("Convolution Finished\n");
 
 
 	return 0;
