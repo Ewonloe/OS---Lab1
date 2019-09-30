@@ -14,10 +14,11 @@ int main(int argc, char *argv[])
 	pid_t pid;
 
 	// image convolving statements
-	int i;
+	int i, j;
 	char str[128];
 	double kernel[3][3];
-	int imgNumber, threshold, skipAnalysis;
+	float **imgMatrix, **imgMatrix2;
+	int imgNumber, threshold, skipAnalysis, tempN = 0;
 	Img imageFile;
 
 	// Read kernel;
@@ -43,15 +44,40 @@ int main(int argc, char *argv[])
 	read(READ, str, 128);
 
 	imageFile.data = (char*) malloc(sizeof(char) * (imageFile.dataSize));
-	i = 0;
-	
-	while (i < (imageFile.dataSize))
-	{	read(READ, str, 128);
-		sscanf(str,"%c", &imageFile.data[i]);
-		i = i + 1;
+
+	while(tempN < imgNumber)
+	{
+		imgMatrix = (float**) malloc(sizeof(float*) * imageFile.height);
+		for(i = 0; i < imageFile.height; i++)
+		{
+			imgMatrix[i] = (float*) malloc(sizeof(float) * imageFile.width);
+		}
+		setImage(imgMatrix, &imageFile);
+		//printMat(imgMatrix, &imageFile);
+		printf("\n");
+
+		//THIS ONE VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+		float **imgMatrix2 = (float**) malloc(sizeof(float*) * imageFile.height);
+		for(i = 0; i < imageFile.height; i++)
+		{
+			imgMatrix2[i] = (float*) malloc(sizeof(float) * imageFile.width);
+		}
+		i = 0;
+		while (i < (imageFile.dataSize))
+		{	
+			read(READ, str, 128);
+			sscanf(str,"%c", &imageFile.data[i]);
+			i = i + 1;
+		}
+		convolution(imgMatrix, imgMatrix2, kernel, &imageFile);
+		//printMat(imgMatrix, &imageFile);
+		tempN++;
+		for(i = 0; i < imageFile.height; i++)
+		{
+			free(imgMatrix[i]);
+			free(imgMatrix2[i]);
+		}
 	}
-	
-	stringToHex(imageFile.data, imageFile.dataSize);
 
 	return 0;
 }

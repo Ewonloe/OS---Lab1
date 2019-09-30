@@ -8,5 +8,7 @@ typedef struct
     unsigned int dataSize;
     unsigned char *data;
     unsigned int bitDepth;
+    unsigned int colorType;
+    unsigned int cMethod;
 }Img;
 #endif

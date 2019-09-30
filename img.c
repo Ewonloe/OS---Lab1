@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "structs.h"
+#include "img.h"
 
 void stringToHex(unsigned char* str, unsigned int realSize);
 
@@ -51,6 +52,60 @@ unsigned int hexToDec(unsigned char hex[], int length)
     return result;
 }
 
+void setImage(float **imgMatrix, Img *imgFile)
+{
+    int i, j, pos = 0;
+    char pixel[3];
+    for(i = 0; i < imgFile->height; i++)
+    {
+        for(j = 0; j < imgFile->width; j++)
+        {
+            pixel[0] = imgFile->data[pos];
+            pixel[1] = imgFile->data[pos + 1];
+            pixel[2] = imgFile->data[pos + 2];
+            imgMatrix[i][j] = (float) hexToDec(pixel, 3);
+            printf("its %lf and\n", imgMatrix[i][j]);
+            stringToHex(pixel, 3);
+            pos += 3;
+        }
+    }
+}
+
+void convolution(float **imgMatrix, float **imgMatrix2, double kernel[3][3], Img *imgFile)
+{
+    int i, j;    
+    for(i = 0; i < imgFile->height; i++)
+    {
+        for(j = 0; j < imgFile->width; j++)
+        {
+            if(i == 0 || j == 0)
+            {
+                imgMatrix2[i][j] = 0;
+            }
+            else
+            {
+                imgMatrix2[i][j] = (imgMatrix[i-1][j-1] * kernel[0][0] + imgMatrix[i-1][j] * kernel[0][1] + imgMatrix[i-1][j+1] * kernel[0][2]
+                                  + imgMatrix[i][j-1] * kernel[1][0] + imgMatrix[i][j] * kernel[1][1] + imgMatrix[i+1][j] * kernel[1][2]
+                                  + imgMatrix[i+1][j-1] * kernel[2][0] + imgMatrix[i+1][j] * kernel[2][1] + imgMatrix[i+1][j+1] * kernel[2][2]
+                                   ) / 9;
+            }
+        }
+    }
+}
+
+void printMat(float** imgMatr, Img *imgFile)
+{
+    int i,j;
+    for(i = 0; i < imgFile->height; i++)
+    {
+        for(j = 0; j < imgFile->width; j++)
+        {
+            printf("%lf ", imgMatr[i][j]);
+        }
+        printf("\n");
+    }
+}
+
 void stringToHex(unsigned char* str, unsigned int realSize)
 {
     int i;
@@ -65,7 +120,7 @@ void stringToHex(unsigned char* str, unsigned int realSize)
 
 void getDimensions(char *buffer, Img *imgFile)
 {
-    unsigned char strWidth[4], strHeight[4], bitDepth[1];
+    unsigned char strWidth[4], strHeight[4], bitDepth[1], cType[1], cMethod[1];
     int i;
     for(i = 0; i < 4; i++)
     {
@@ -73,9 +128,13 @@ void getDimensions(char *buffer, Img *imgFile)
         strHeight[i] = buffer[i + 4];           
     }
     bitDepth[0] = buffer[8];
+    cType[0] = buffer[9];
+    cMethod[0] = buffer[10];
     imgFile->width = hexToDec(strWidth, 4);
     imgFile->height = hexToDec(strHeight, 4);
     imgFile->bitDepth = hexToDec(bitDepth, 1);
+    imgFile->colorType = hexToDec(cType, 1);
+    imgFile->cMethod = hexToDec(cMethod, 1);
 }
 
 void getData(unsigned char* buffer, Img *imgFile, int lenght)

@@ -13,8 +13,14 @@ void getData(unsigned char* buffer, Img *imgFile, int lenght);
 
 char* readChunk(int fd, Img *imgFile);
 
-void readPNG(int fd);
+Img readPNG(int fd);
 
 Img startLecture(char* fileName);
+
+void convolution(float **imgMatrix, float **imgMatrix2, double kernel[3][3], Img *imgFile);
+
+void setImage(float **imgMatrix, Img *imgFile);
+
+void printMat(float** imgMatr, Img *imgFile);
 
 #endif

@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
 	pid_t pid;
 
 	// Image reading statements
-	int fileDescr, dataStream, i = 0, j = 0;
+	int fileDescr, dataStream, i = 0, j = 0, tempN = 1;
 	ssize_t pngFile;
 	char str[128], fileName[255], data[4097];
 	int imgNumber, threshold, skipAnalysis;
@@ -61,40 +61,42 @@ int main(int argc, char *argv[])
 		
 	}
 
-
-	sprintf(fileName,"imagen_%d.png", imgNumber);//Generate the name of the file to be opened
-	printf("Searching file '%s'....\n", fileName);
-	fileDescr = open(fileName, O_RDONLY);
-	if(fileDescr < 0)
+	while(tempN < imgNumber)
 	{
-		printf("File '%s' not found\nClosing program...\n", fileName);
-		exit(0);
-	}
-	else
-	{
-		imageFile = startLecture(fileName);
-		printf("\n");
-	}
+		sprintf(fileName,"imagen_%d.png", tempN);//Generate the name of the file to be opened
+		printf("Searching file '%s'....\n", fileName);
+		fileDescr = open(fileName, O_RDONLY);
+		if(fileDescr < 0)
+		{
+			printf("File '%s' not found\nClosing program...\n", fileName);
+			exit(0);
+		}
+		else
+		{
+			imageFile = startLecture(fileName);
+			printf("\n");
+		}
 
-	close(fileDescr);
-	//Function number 1 goes here
+		close(fileDescr);
+		//Function number 1 goes here
 
-	// Send image.
+		// Send image.
 
-	sprintf(str, "%u %u %u %u", imageFile.width, imageFile.height, imageFile.dataSize, imageFile.bitDepth);
-	write(piped[WRITE], str, 128);
-
-	
-	while (i < imageFile.dataSize)
-	{	
-		sprintf(str,"%c", imageFile.data[i]);
+		sprintf(str, "%u %u %u %u", imageFile.width, imageFile.height, imageFile.dataSize, imageFile.bitDepth);
 		write(piped[WRITE], str, 128);
-		i = i + 1;
-	}
-	
-	
-	printf("Image 'imagen_%d' reading process ended successfully\n", imgNumber);
+
 		
+		while (i < imageFile.dataSize)
+		{	
+			sprintf(str,"%c", imageFile.data[i]);
+			write(piped[WRITE], str, 128);
+			i = i + 1;
+		}
+		
+		
+		printf("Image 'imagen_%d' reading process ended successfully\n", tempN);
+		tempN++;
+	}
 
 
 	return 0;
