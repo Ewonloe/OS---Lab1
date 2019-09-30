@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 			i = i + 1;
 		}
 		convolution(imgMatrix, imgMatrix2, kernel, &imageFile);
-		//printMat(imgMatrix, &imageFile);
+		printMat(imgMatrix, &imageFile);
 		tempN++;
 		for(i = 0; i < imageFile.height; i++)
 		{

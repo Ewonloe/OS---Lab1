@@ -64,7 +64,6 @@ void setImage(float **imgMatrix, Img *imgFile)
             pixel[1] = imgFile->data[pos + 1];
             pixel[2] = imgFile->data[pos + 2];
             imgMatrix[i][j] = (float) hexToDec(pixel, 3);
-            printf("its %lf and\n", imgMatrix[i][j]);
             stringToHex(pixel, 3);
             pos += 3;
         }
@@ -100,7 +99,7 @@ void printMat(float** imgMatr, Img *imgFile)
     {
         for(j = 0; j < imgFile->width; j++)
         {
-            printf("%lf ", imgMatr[i][j]);
+            printf("%f ", imgMatr[i][j]);
         }
         printf("\n");
     }
