@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
 		for(j = 0; j < imageFile.width; j++)
 		{
 			read(READ, str, 128);
-			sscanf(str, "%lf", &imageFile.image2[i][j]);
+			sscanf(str, "%f", &imageFile.image2[i][j]);
 		}
 	}
 	rectification(&imageFile);

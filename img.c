@@ -143,7 +143,7 @@ void pooling(float **imgMatrix, Img *imgFile, float **imgMatrix2)
     {
         for(j = 0; j < width; j += fWidth)
         {
-            for()
+            //for()
         }
     }
 
@@ -243,7 +243,7 @@ void getData(unsigned char* buffer, Img *imgFile, int lenght)
     }
     else
     {
-        strcat(imgFile, buffer);
+        //strcat(imgFile, buffer);
     }    
     imgFile->dataSize += lenght;
 }
