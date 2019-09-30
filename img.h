@@ -23,4 +23,6 @@ void setImage(float **imgMatrix, Img *imgFile);
 
 void printMat(float** imgMatr, Img *imgFile);
 
+void rectification(float **imgMatrix, Img *imgFile);
+
 #endif
