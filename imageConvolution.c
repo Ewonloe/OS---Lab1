@@ -77,6 +77,8 @@ int main(int argc, char *argv[])
 			free(imgMatrix[i]);
 			free(imgMatrix2[i]);
 		}
+		free(imgMatrix);
+		free(imgMatrix2);
 	}
 
 	return 0;
