@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
 			sscanf(str,"%c", &imageFile.data[i]);
 			i = i + 1;
 		}
-		
+
 		imgMatrix = (float**) malloc(sizeof(float*) * imageFile.height);
 		for(i = 0; i < imageFile.height; i++)
 		{
@@ -95,18 +95,21 @@ int main(int argc, char *argv[])
 		{
 			imgMatrix2[i] = (float*) malloc(sizeof(float) * imageFile.width);
 		}
+
 		convolution(imgMatrix, imgMatrix2, kernel, &imageFile);
+
 		tempN++;
 
 		for(i = 0; i < imageFile.height; i++)
 		{
 
-			for(j = 0; j < imageFile.width; i++)
+			for(j = 0; j < imageFile.width; j++)
 			{
+
 				sprintf(str,"%f", imgMatrix2[i][j]);
 				write(piped[WRITE], str, 128);
 			}
-
+			
 			free(imgMatrix[i]);
 			free(imgMatrix2[i]);
 		}
@@ -114,6 +117,8 @@ int main(int argc, char *argv[])
 		free(imgMatrix);
 		free(imgMatrix2);
 	}
+
+
 
 	return 0;
 }
