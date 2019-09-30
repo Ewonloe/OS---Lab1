@@ -55,15 +55,10 @@ int main(int argc, char *argv[])
 	{
 		for(j = 0; j < imageFile.width; j++)
 		{
-			printf("Hola1\n");
 			read(READ, str, 128);
-			printf("%s\n", str);
-			printf("Hola\n");
 			sscanf(str, "%f", &imageFile.image2[i][j]);
-			printf("Hola\n");
 		}
 	}
-	printf("Hola2\n");
 	rectification(&imageFile);
 
 	printf("Data = %d\n", imageFile.height);

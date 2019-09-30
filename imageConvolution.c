@@ -75,6 +75,14 @@ int main(int argc, char *argv[])
 
 	while(tempN < imgNumber)
 	{
+		i = 0;
+		while (i < (imageFile.dataSize))
+		{	
+			read(READ, str, 128);
+			sscanf(str,"%c", &imageFile.data[i]);
+			i = i + 1;
+		}
+		
 		imgMatrix = (float**) malloc(sizeof(float*) * imageFile.height);
 		for(i = 0; i < imageFile.height; i++)
 		{
@@ -87,13 +95,7 @@ int main(int argc, char *argv[])
 		{
 			imgMatrix2[i] = (float*) malloc(sizeof(float) * imageFile.width);
 		}
-		i = 0;
-		while (i < (imageFile.dataSize))
-		{	
-			read(READ, str, 128);
-			sscanf(str,"%c", &imageFile.data[i]);
-			i = i + 1;
-		}
+		
 		convolution(imgMatrix, imgMatrix2, kernel, &imageFile);
 		tempN++;
 
