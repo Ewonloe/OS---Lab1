@@ -25,7 +25,7 @@ void setImgMatrix(float **imgMatrix, Img *imgFile);
 
 void printMat(float** imgMatr, Img *imgFile);
 
-void rectification(float **imgMatrix, Img *imgFile);
+void rectification(Img *imgFile);
 
 int nearlyBlack(float** imgMatrix, Img *imgFile, float percentage);
 

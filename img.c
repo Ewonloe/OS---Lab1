@@ -119,31 +119,31 @@ void convolution(float **imgMatrix, float **imgMatrix2, double kernel[3][3], Img
 //Input: The bidimensional array for the image, Img struct pointer
 //Function: Verifies if all pixel values are non negative, if they are, changes them to 0
 //Output: Rectified image
-void rectification(float **imgMatrix, Img *imgFile)
+void rectification(Img *imgFile)
 {
     int i,j;
     for(i = 0; i < imgFile->height; i++)
     {
         for(j = 0; j < imgFile->width; j++)
         {
-            if(imgMatrix[i][j] < 0)
+            if(imgFile->image2[i][j] < 0)
             {
-                imgMatrix[i][j] = 0;
+                imgFile->image2[i][j] = 0;
             }
         }
     }
 }
 
-void pooling(float **imgMatrix, Img *imgFile)
+void pooling(float **imgMatrix, Img *imgFile, float **imgMatrix2)
 {
-    int i, j, width = imgFile->width, height = imgFile->height, fWidth = 2, fHeight = 2;
+    int i, j, x, y, width = imgFile->width, height = imgFile->height, fWidth = 2, fHeight = 2;
     //int 
     float maxTemp;
     for(i = 0; i < height; i += fHeight)
     {
-        for(i = 0; i < width; i += fWidth)
+        for(j = 0; j < width; j += fWidth)
         {
-
+            for()
         }
     }
 
