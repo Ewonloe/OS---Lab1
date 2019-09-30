@@ -86,6 +86,7 @@ void getData(unsigned char* buffer, Img *imgFile, int lenght)
     {
         imgFile->data[i] = buffer[i];
     }
+    imgFile->dataSize = lenght;
     //stringToHex(buffer, lenght);
     //stringToHex(imgFile->data, lenght);
 }
