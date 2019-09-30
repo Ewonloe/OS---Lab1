@@ -64,7 +64,6 @@ void setImage(float **imgMatrix, Img *imgFile)
             pixel[1] = imgFile->data[pos + 1];
             pixel[2] = imgFile->data[pos + 2];
             imgMatrix[i][j] = (float) hexToDec(pixel, 3);
-            stringToHex(pixel, 3);
             pos += 3;
         }
     }
@@ -91,6 +90,23 @@ void convolution(float **imgMatrix, float **imgMatrix2, double kernel[3][3], Img
         }
     }
 }
+
+void rectification(float **imgMatrix, Img *imgFile)
+{
+    int i,j;
+    for(i = 0, i < imgFile->height; i++)
+    {
+        for(j = 0, j < imgFile->width; j++)
+        {
+            if(imgMatrix[i][j] < 0)
+            {
+                imgMatrix[i][j] = 0;
+            }
+        }
+    }
+}
+
+void pooling(float **imgMatrix);
 
 void printMat(float** imgMatr, Img *imgFile)
 {

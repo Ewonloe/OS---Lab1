@@ -80,6 +80,7 @@ int main(int argc, char *argv[])
 		{
 			imgMatrix[i] = (float*) malloc(sizeof(float) * imageFile.width);
 		}
+		printf("%d %d", imageFile.height, imageFile.width);
 		setImage(imgMatrix, &imageFile);
 		//printMat(imgMatrix, &imageFile);
 		printf("\n");
@@ -98,6 +99,7 @@ int main(int argc, char *argv[])
 			i = i + 1;
 		}
 		convolution(imgMatrix, imgMatrix2, kernel, &imageFile);
+		//printMat(imgMatrix2, &imageFile);
 		tempN++;
 
 
