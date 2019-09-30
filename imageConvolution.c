@@ -39,6 +39,7 @@ int main(int argc, char *argv[])
 
 	// Read image pixels.
 
+	printf("%d %d %d %d\n", imageFile.width, imageFile.height, imageFile.dataSize, imageFile.bitDepth);
 	read(READ, str, 128);
 
 	imageFile.data = (char*) malloc(sizeof(char) * (imageFile.width * imageFile.height * 3));
