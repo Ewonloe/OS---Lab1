@@ -4,8 +4,8 @@ main: main.c utils.o imageReading.c imageReading
 imageReading: imageReading.c img.o imageConvolution
 	gcc -o imageReading imageReading.c img.o
 
-imageConvolution: imageConvolution.c
-	gcc -o imageConvolution imageConvolution.c
+imageConvolution: imageConvolution.c img.o
+	gcc -o imageConvolution imageConvolution.c img.o
 
 utils.o: utils.c utils.h
 	gcc -c utils.c

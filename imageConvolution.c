@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "structs.h"
+#include "img.h"
 
 #define READ 0
 #define WRITE 1
@@ -38,18 +39,19 @@ int main(int argc, char *argv[])
 
 
 	// Read image pixels.
-
 	printf("%d %d %d %d\n", imageFile.width, imageFile.height, imageFile.dataSize, imageFile.bitDepth);
 	read(READ, str, 128);
 
-	imageFile.data = (char*) malloc(sizeof(char) * (imageFile.width * imageFile.height * 3));
+	imageFile.data = (char*) malloc(sizeof(char) * (imageFile.dataSize));
 	i = 0;
-
-	while (i < (imageFile.width * imageFile.height * 3))
+	
+	while (i < (imageFile.dataSize))
 	{	read(READ, str, 128);
-		sscanf(str,"%c%c%c", &imageFile.data[i], &imageFile.data[i+1], &imageFile.data[i+2]);
-		i = i + 3;
+		sscanf(str,"%c", &imageFile.data[i]);
+		i = i + 1;
 	}
+	
+	stringToHex(imageFile.data, imageFile.dataSize);
 
 	return 0;
 }

@@ -84,12 +84,14 @@ int main(int argc, char *argv[])
 	sprintf(str, "%u %u %u %u", imageFile.width, imageFile.height, imageFile.dataSize, imageFile.bitDepth);
 	write(piped[WRITE], str, 128);
 
-	while (i < (imageFile.width * imageFile.height * 3))
+	
+	while (i < imageFile.dataSize)
 	{	
-		sprintf(str,"%c%c%c", imageFile.data[i], imageFile.data[i+1], imageFile.data[i+2]);
+		sprintf(str,"%c", imageFile.data[i]);
 		write(piped[WRITE], str, 128);
-		i = i + 3;
+		i = i + 1;
 	}
+	
 	
 	printf("Image 'imagen_%d' reading process ended successfully\n", imgNumber);
 		
