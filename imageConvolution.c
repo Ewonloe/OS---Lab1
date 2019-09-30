@@ -31,17 +31,45 @@ int main(int argc, char *argv[])
 	// Read global args.
 	read(READ, str, 128);
 	sscanf(str, "%d %d %d", &imgNumber, &threshold, &skipAnalysis);
-
-
+	printf("%d %d %d\n", imgNumber, threshold, skipAnalysis);
 
 	// Read image params.
 	read(READ, str, 128);
 	sscanf(str, "%u %u %u %u", &imageFile.width, &imageFile.height, &imageFile.dataSize, &imageFile.bitDepth);
-
-
-	// Read image pixels.
 	printf("%d %d %d %d\n", imageFile.width, imageFile.height, imageFile.dataSize, imageFile.bitDepth);
-	read(READ, str, 128);
+
+
+	// Transmission start.
+	pipe(piped);
+	pid = fork();
+
+	// Child section
+	if (pid == 0)
+	{
+		close(piped[WRITE]);
+		dup2(piped[READ], STDIN_FILENO);
+
+		char *args[] = {(char *)"imageRectification", NULL};
+		execvp("./imageRectification", args);
+		perror("exec failed");
+		return 1;
+	}
+
+	else
+	{
+		close(piped[READ]);
+
+		// Send global args.
+		sprintf(str, "%d %d %d", imgNumber, threshold, skipAnalysis);
+		write(piped[WRITE], str, 128);
+
+		// Send image params.
+		sprintf(str, "%u %u %u", imageFile.width, imageFile.height, imageFile.dataSize);
+		write(piped[WRITE], str, 128);
+	
+	}
+
+
 
 	imageFile.data = (char*) malloc(sizeof(char) * (imageFile.dataSize));
 
@@ -70,13 +98,22 @@ int main(int argc, char *argv[])
 			i = i + 1;
 		}
 		convolution(imgMatrix, imgMatrix2, kernel, &imageFile);
-		printMat(imgMatrix, &imageFile);
 		tempN++;
+
+
 		for(i = 0; i < imageFile.height; i++)
 		{
+
+			for(j = 0; j < imageFile.width; i++)
+			{
+				sprintf(str,"%f", imgMatrix2[i][j]);
+				write(piped[WRITE], str, 128);
+			}
+
 			free(imgMatrix[i]);
 			free(imgMatrix2[i]);
 		}
+
 		free(imgMatrix);
 		free(imgMatrix2);
 	}

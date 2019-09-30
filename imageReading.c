@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
 		
 	}
 
-	while(tempN < imgNumber)
+	while(tempN <= imgNumber)
 	{
 		sprintf(fileName,"imagen_%d.png", tempN);//Generate the name of the file to be opened
 		printf("Searching file '%s'....\n", fileName);
@@ -71,6 +71,8 @@ int main(int argc, char *argv[])
 			printf("File '%s' not found\nClosing program...\n", fileName);
 			exit(0);
 		}
+
+
 		else
 		{
 			imageFile = startLecture(fileName);
