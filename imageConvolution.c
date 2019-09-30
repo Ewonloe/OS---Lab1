@@ -95,10 +95,8 @@ int main(int argc, char *argv[])
 		{
 			imgMatrix2[i] = (float*) malloc(sizeof(float) * imageFile.width);
 		}
-		
 		convolution(imgMatrix, imgMatrix2, kernel, &imageFile);
 		tempN++;
-
 
 		for(i = 0; i < imageFile.height; i++)
 		{

@@ -96,7 +96,7 @@ void setImgMatrix(float **imgMatrix, Img *imgFile)
 //Output: Void (none)
 void convolution(float **imgMatrix, float **imgMatrix2, double kernel[3][3], Img *imgFile)
 {
-    int i, j;    
+    int i, j;
     for(i = 0; i < imgFile->height; i++)
     {
         for(j = 0; j < imgFile->width; j++)
@@ -105,8 +105,13 @@ void convolution(float **imgMatrix, float **imgMatrix2, double kernel[3][3], Img
             {
                 imgMatrix2[i][j] = 0;
             }
+            else if(i == imgFile->height - 1 || j == imgFile->width - 1)
+            {
+                imgMatrix2[i][j] = 0;
+            }
             else
             {
+                //printf("pro calcular i = %d j = %d\n", i, j);
                 imgMatrix2[i][j] = (imgMatrix[i-1][j-1] * kernel[0][0] + imgMatrix[i-1][j] * kernel[0][1] + imgMatrix[i-1][j+1] * kernel[0][2]
                                   + imgMatrix[i][j-1] * kernel[1][0] + imgMatrix[i][j] * kernel[1][1] + imgMatrix[i+1][j] * kernel[1][2]
                                   + imgMatrix[i+1][j-1] * kernel[2][0] + imgMatrix[i+1][j] * kernel[2][1] + imgMatrix[i+1][j+1] * kernel[2][2]
