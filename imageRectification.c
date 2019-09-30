@@ -18,14 +18,15 @@ int main(int argc, char *argv[])
 	char str[128];
 	int imgNumber, threshold, skipAnalysis;
 	Img imageFile;
-	float **imgMatrix = (float**) malloc(sizeof(float*) * imageFile.height);
-	for(i = 0; i < imageFile.width; i++)
+	
+	float **imgMatrix;
+	imgMatrix = (float**) malloc(sizeof(float*) * imageFile.height);
+	for(i = 0; i < imageFile.height; i++)
 	{
 		imgMatrix[i] = (float*) malloc(sizeof(float) * imageFile.width);
 	}
-
 	imageFile.image2 = (float**)malloc(sizeof(float*) * imageFile.height);
-	for(i = 0; i < imageFile.width; i++)
+	for(i = 0; i < imageFile.height; i++)
 	{
 		imageFile.image2[i] = (float*) malloc(sizeof(float) * imageFile.width);
 	}
@@ -41,6 +42,7 @@ int main(int argc, char *argv[])
 	imageFile.data = (char*) malloc(sizeof(char) * imageFile.dataSize);
 
 	i = 0;
+
 	/*
 	while (i < (imageFile.dataSize))
 	{	
@@ -53,10 +55,15 @@ int main(int argc, char *argv[])
 	{
 		for(j = 0; j < imageFile.width; j++)
 		{
+			printf("Hola1\n");
 			read(READ, str, 128);
+			printf("%s\n", str);
+			printf("Hola\n");
 			sscanf(str, "%f", &imageFile.image2[i][j]);
+			printf("Hola\n");
 		}
 	}
+	printf("Hola2\n");
 	rectification(&imageFile);
 
 	printf("Data = %d\n", imageFile.height);
