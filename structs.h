@@ -13,7 +13,7 @@ typedef struct
     unsigned int cMethod;
     float ** image2;
     float **poolImg;
-    int poolWidth;
-    int poolHeight;
+    unsigned int poolWidth;
+    unsigned int poolHeight;
 }Img;
 #endif

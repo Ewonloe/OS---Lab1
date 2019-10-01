@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/wait.h>
 #include "structs.h"
 #include "img.h"
 
@@ -98,9 +99,9 @@ int main(int argc, char *argv[])
 		tempN++;
 	}
 
-	printf("Rectification Finished\n");
+	close(piped[WRITE]); 
 
-
+ 	pid_t wpid = waitpid(pid, NULL, 0);
 
 	return 0;
 }

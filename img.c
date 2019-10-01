@@ -170,7 +170,6 @@ void pooling(float **imgMatrix, Img *imgFile)
     }
     imgFile->poolWidth = poolImgW;
     imgFile->poolHeight = poolImgH;
-    printf("%d y %d\n", poolImgW, poolImgH);
     for(i = 0; i < height; i += fHeight)
     {
         for(j = 0; j < width; j += fWidth)
@@ -320,7 +319,6 @@ char* readChunk(int fd, Img *imgFile)
         size = read(fd, buffer, lenght);//Store chunk data
 
         size = read(fd, crc, 4);//Get crc
-        printf("\n");
         if(strcmp(chunkName, "IHDR") == 0)
         {
             getDimensions(buffer, imgFile);

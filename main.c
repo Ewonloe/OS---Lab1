@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
+#include <sys/wait.h>
 #include "utils.h"
 
 #define READ 0
@@ -107,6 +108,10 @@ int main(int argc, char *argv[])
 												   kernel[2][0], kernel[2][1], kernel[2][2]);
 		write(piped[WRITE], str, 128);
 	}
+
+	close(piped[WRITE]); 
+
+ 	pid_t wpid = waitpid(pid, NULL, 0);
 
 	return 0;
 }

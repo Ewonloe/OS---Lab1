@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/wait.h>
 #include "structs.h"
 #include "img.h"
 
@@ -115,9 +116,9 @@ int main(int argc, char *argv[])
 		free(imgMatrix2);
 	}
 
+	close(piped[WRITE]); 
 
-	printf("Convolution Finished\n");
-
+ 	pid_t wpid = waitpid(pid, NULL, 0);
 
 	return 0;
 }

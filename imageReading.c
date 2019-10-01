@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <sys/wait.h>
 #include <sys/types.h> //  Both of these are potentially useless
 #include <sys/stat.h>  //
 #include "structs.h"
@@ -76,7 +77,6 @@ int main(int argc, char *argv[])
 		else
 		{
 			imageFile = startLecture(fileName);
-			printf("\n");
 		}
 
 		close(fileDescr);
@@ -96,9 +96,12 @@ int main(int argc, char *argv[])
 		}
 		
 		
-		printf("Image 'imagen_%d' reading process ended successfully\n", tempN);
 		tempN++;
 	}
+
+	close(piped[WRITE]); 
+
+ 	pid_t wpid = waitpid(pid, NULL, 0);
 
 	return 0;
 }

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/wait.h>
 #include "structs.h"
 #include "img.h"
 
@@ -26,9 +27,34 @@ int main(int argc, char *argv[])
 	sscanf(str, "%d %d %d", &imgNumber, &threshold, &skipAnalysis);
 
 
-	printf("Hola\n");
+	// Transmission start.
+	pipe(piped);
+	pid = fork();
+
+	// Child section
+	if (pid == 0)
+	{
+		close(piped[WRITE]);
+		dup2(piped[READ], STDIN_FILENO);
+
+		char *args[] = {(char *)"imageClassification", NULL};
+		execvp("./imageClassification", args);
+		perror("exec failed");
+		return 1;
+	}
+
+	else
+	{
+		close(piped[READ]);
+
+		// Send global args.
+		sprintf(str, "%d %d %d", imgNumber, threshold, skipAnalysis);
+		write(piped[WRITE], str, 128);
+	}
+
 	while(tempN < imgNumber)
 	{
+
 		// Read image params.
 		read(READ, str, 128);
 		sscanf(str, "%u %u %u", &imageFile.width, &imageFile.height, &imageFile.dataSize);
@@ -40,24 +66,43 @@ int main(int argc, char *argv[])
 		}
 
 		// Read image.
-		int k = 0;
 		for(i = 0; i < imageFile.height; i++)
 		{
 			for(j = 0; j < imageFile.width; j++)
 			{
 				read(READ, str, 128);
 				sscanf(str, "%f", &imageFile.image2[i][j]);
-				//printf("data:%f y %d\n", imageFile.image2[i][j], k);
-				k++;
 			}
 		}
-		printf("Hola\n");
+
+
+
 		pooling(imageFile.image2, &imageFile);
 		tempN++;
-		printf("Hola\n");
+
+
+		// Send pooled image and new params.
+		sprintf(str, "%u %u", imageFile.poolHeight, imageFile.poolWidth);
+		write(piped[WRITE], str, 128);
+
+		for(i = 0; i < imageFile.poolHeight; i++)
+		{
+			for(j = 0; j < imageFile.poolWidth; j++)
+			{
+				sprintf(str, "%f", imageFile.poolImg[i][j]);
+				write(piped[WRITE], str, 128);
+			}
+
+			free(imageFile.poolImg[i]);
+		}
+
+		free(imageFile.poolImg);
+
 	}
 
-	printf("Pooling Finished\n");
+	close(piped[WRITE]); 
+
+ 	pid_t wpid = waitpid(pid, NULL, 0);
 
 	return 0;
 }
