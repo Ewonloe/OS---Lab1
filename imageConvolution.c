@@ -30,9 +30,6 @@ int main(int argc, char *argv[])
 	// Read global args.
 	read(READ, str, 128);
 	sscanf(str, "%d %d %d", &imgNumber, &threshold, &skipAnalysis);
-	//printf("%d %d %d\n", imgNumber, threshold, skipAnalysis);
-
-	//printf("%d %d %d %d\n", imageFile.width, imageFile.height, imageFile.dataSize, imageFile.bitDepth);
 
 	// Transmission start.
 	pipe(piped);
@@ -62,14 +59,14 @@ int main(int argc, char *argv[])
 
 
 
-	imageFile.data = (char*) malloc(sizeof(char) * (imageFile.dataSize));
-
 	while(tempN < imgNumber)
 	{
 
 		// Read image params.
 		read(READ, str, 128);
-		sscanf(str, "%u %u %u %u", &imageFile.width, &imageFile.height, &imageFile.dataSize, &imageFile.bitDepth);
+		sscanf(str, "%u %u %u", &imageFile.width, &imageFile.height, &imageFile.dataSize);
+
+		imageFile.data = (char*) malloc(sizeof(char) * (imageFile.dataSize));
 
 		i = 0;
 		while (i < (imageFile.dataSize))
@@ -82,7 +79,6 @@ int main(int argc, char *argv[])
 		imgMatrix = (float**) malloc(sizeof(float*) * imageFile.height);
 		for(i = 0; i < imageFile.height; i++)
 		{
-			printf("i = (%d/%d)\n", i, imageFile.height);
 			imgMatrix[i] = (float*) malloc(sizeof(float) * imageFile.width);
 		}
 		setImage(imgMatrix, &imageFile);
@@ -107,7 +103,6 @@ int main(int argc, char *argv[])
 			for(j = 0; j < imageFile.width; j++)
 			{
 				sprintf(str,"%f", imgMatrix2[i][j]);
-				printf("xd = %f\n",imgMatrix2[i][j]);
 				write(piped[WRITE], str, 128);
 			}
 			
