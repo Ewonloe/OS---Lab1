@@ -29,4 +29,6 @@ void rectification(Img *imgFile);
 
 int nearlyBlack(float** imgMatrix, Img *imgFile, float percentage);
 
+void pooling(float **imgMatrix, Img* imgFile);
+
 #endif

@@ -139,19 +139,58 @@ void rectification(Img *imgFile)
     }
 }
 
-void pooling(float **imgMatrix, Img *imgFile, float **imgMatrix2)
+//Input: 
+void pooling(float **imgMatrix, Img *imgFile)
 {
     int i, j, x, y, width = imgFile->width, height = imgFile->height, fWidth = 2, fHeight = 2;
-    //int 
+    int poolImgW, poolImgH, pW = 0, pH = 0;
     float maxTemp;
+    if(width % fWidth == 0)
+    {
+        poolImgW = width / fWidth;
+    }
+    else
+    {
+        poolImgW = (width / fWidth) + 1; 
+    }
+    if(height % fHeight == 0)
+    {
+        poolImgH = height / fHeight;
+    }
+    else
+    {
+        poolImgH = (height / fHeight) + 1;
+    }
+    imgFile->poolImg = (float**) malloc(sizeof(float*) * poolImgH);
+    for(i = 0; i < poolImgH; i++)
+    {
+        imgFile->poolImg[i] = (float*) malloc(sizeof(float) * poolImgW);
+    }
+    imgFile->poolWidth = poolImgW;
+    imgFile->poolHeight = poolImgH;
+    printf("%d y %d\n", poolImgW, poolImgH);
     for(i = 0; i < height; i += fHeight)
     {
         for(j = 0; j < width; j += fWidth)
         {
-            //for()
+            maxTemp = imgMatrix[i][j];
+            for(y = i; y < height || y < i + fHeight; y++)
+            {
+                for(x = j; x < width || x < j + fWidth; x++)
+                {
+                    //printf("%f\n", imgMatrix[y][x]);
+                    if(imgMatrix[y][x] > maxTemp)
+                    {
+                        maxTemp = imgMatrix[y][x];
+                    }
+                }
+            }
+            imgFile->poolImg[pH][pW];
+            pW++;
         }
+        pW = 0;
+        pH++;
     }
-
 }
 
 //Input: matrix with pixel values, Img struct pointer and treshold percentage

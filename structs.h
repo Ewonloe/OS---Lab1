@@ -12,5 +12,8 @@ typedef struct
     unsigned int colorType;
     unsigned int cMethod;
     float ** image2;
+    float **poolImg;
+    int poolWidth;
+    int poolHeight;
 }Img;
 #endif

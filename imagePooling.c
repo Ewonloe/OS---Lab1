@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 	sscanf(str, "%d %d %d", &imgNumber, &threshold, &skipAnalysis);
 
 
-
+	printf("Hola\n");
 	while(tempN < imgNumber)
 	{
 		// Read image params.
@@ -40,19 +40,21 @@ int main(int argc, char *argv[])
 		}
 
 		// Read image.
+		int k = 0;
 		for(i = 0; i < imageFile.height; i++)
 		{
 			for(j = 0; j < imageFile.width; j++)
 			{
 				read(READ, str, 128);
 				sscanf(str, "%f", &imageFile.image2[i][j]);
+				printf("data:%f y %d\n", imageFile.image2[i][j], k);
+				k++;
 			}
-
-			free(imageFile.image2[i]);
 		}
-		free(imageFile.image2);
-
+		printf("Hola\n");
+		pooling(imageFile.image2, &imageFile);
 		tempN++;
+		printf("Hola\n");
 	}
 
 	printf("Pooling Finished\n");
