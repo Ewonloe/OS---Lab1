@@ -82,6 +82,7 @@ int main(int argc, char *argv[])
 		imgMatrix = (float**) malloc(sizeof(float*) * imageFile.height);
 		for(i = 0; i < imageFile.height; i++)
 		{
+			printf("i = (%d/%d)\n", i, imageFile.height);
 			imgMatrix[i] = (float*) malloc(sizeof(float) * imageFile.width);
 		}
 		setImage(imgMatrix, &imageFile);
@@ -106,6 +107,7 @@ int main(int argc, char *argv[])
 			for(j = 0; j < imageFile.width; j++)
 			{
 				sprintf(str,"%f", imgMatrix2[i][j]);
+				printf("xd = %f\n",imgMatrix2[i][j]);
 				write(piped[WRITE], str, 128);
 			}
 			

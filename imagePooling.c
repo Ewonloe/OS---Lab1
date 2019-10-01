@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
 			{
 				read(READ, str, 128);
 				sscanf(str, "%f", &imageFile.image2[i][j]);
-				printf("data:%f y %d\n", imageFile.image2[i][j], k);
+				//printf("data:%f y %d\n", imageFile.image2[i][j], k);
 				k++;
 			}
 		}
