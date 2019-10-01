@@ -139,7 +139,9 @@ void rectification(Img *imgFile)
     }
 }
 
-//Input: 
+//Input: Original image, struct pointer
+//Function: Applies max pooling to the image and stores it in the new one
+//Output: None (Void)
 void pooling(float **imgMatrix, Img *imgFile)
 {
     int i, j, x, y, width = imgFile->width, height = imgFile->height, fWidth = 2, fHeight = 2;
